@@ -176,10 +176,8 @@ async def asend_mass_mail(
 
 
 def _base_mail_admins(
-    subject, message, fail_silently=False, connection=None, html_message=None
+    subject, message, connection=None, html_message=None
 ):
-    if not settings.ADMINS:
-        return
     if not all(isinstance(a, (list, tuple)) and len(a) == 2 for a in settings.ADMINS):
         raise ValueError("The ADMINS setting must be a list of 2-tuples.")
     mail = EmailMultiAlternatives(
@@ -198,6 +196,8 @@ def mail_admins(
     subject, message, fail_silently=False, connection=None, html_message=None
 ):
     """Send a message to the admins, as defined by the ADMINS setting."""
+    if not settings.MANAGERS:
+        return
     mail = _base_mail_admins(subject, message, fail_silently, connection, html_message)
     mail.send(fail_silently=fail_silently)
 
@@ -205,15 +205,15 @@ def mail_admins(
 async def amail_admins(
     subject, message, fail_silently=False, connection=None, html_message=None
 ):
+    if not settings.MANAGERS:
+        return
     mail = _base_mail_admins(subject, message, fail_silently, connection, html_message)
     await mail.asend(fail_silently=fail_silently)
 
 
 def _base_mail_managers(
-    subject, message, fail_silently=False, connection=None, html_message=None
+    subject, message, connection=None, html_message=None
 ):
-    if not settings.MANAGERS:
-        return
     if not all(isinstance(a, (list, tuple)) and len(a) == 2 for a in settings.MANAGERS):
         raise ValueError("The MANAGERS setting must be a list of 2-tuples.")
     mail = EmailMultiAlternatives(
@@ -232,6 +232,8 @@ def mail_managers(
     subject, message, fail_silently=False, connection=None, html_message=None
 ):
     """Send a message to the managers, as defined by the MANAGERS setting."""
+    if not settings.MANAGERS:
+        return
     mail = _base_mail_managers(
         subject, message, fail_silently, connection, html_message
     )
@@ -242,6 +244,8 @@ async def amail_managers(
     subject, message, fail_silently=False, connection=None, html_message=None
 ):
     """Send a message to the managers, as defined by the MANAGERS setting."""
+    if not settings.MANAGERS:
+        return
     mail = _base_mail_managers(
         subject, message, fail_silently, connection, html_message
     )
